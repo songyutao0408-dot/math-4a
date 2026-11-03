@@ -76,7 +76,26 @@
       return nv.length > 0 && nv === normalizeReading(q.answer);
     },
     placeValue: function (q, v) { return typeof v === 'string' && isDigits(v) && v === String(q.answer); },
-    split: function (q, v) { return sameSet(v, q.answer); }
+    split: function (q, v) { return sameSet(v, q.answer); },
+    /** 画角：允许误差（默认 ±2°） */
+    drawAngle: function (q, v) {
+      var tol = q.data && typeof q.data.tolerance === 'number' ? q.data.tolerance : 2;
+      return typeof v === 'number' && Math.abs(v - q.answer) <= tol;
+    },
+    /** 分类：每个图形都进了对的筐 */
+    sort: function (q, v) {
+      if (!Array.isArray(v) || v.length !== q.answer.length) return false;
+      for (var i = 0; i < v.length; i++) if (v[i] !== q.answer[i]) return false;
+      return true;
+    },
+    /** 在图上点：点中任意一个正确答案都算对 */
+    pick: function (q, v) { return (Array.isArray(q.answer) ? q.answer : [q.answer]).indexOf(v) >= 0; },
+    /** 竖式：每一行都要和答案一致（空格用 _ 表示） */
+    vmul: function (q, v) {
+      if (!Array.isArray(v) || v.length !== q.answer.length) return false;
+      for (var i = 0; i < v.length; i++) if (v[i] !== q.answer[i]) return false;
+      return true;
+    }
   };
   // 复合题型沿用填空判定
   checkers.round = checkers.fill;

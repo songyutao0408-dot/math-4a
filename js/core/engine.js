@@ -36,6 +36,7 @@
 
     var page = h('div', { class: 'page play' });
     if (opts.theme) { page.style.setProperty('--theme', opts.theme); page.style.setProperty('--theme-deep', MI.util.shade(opts.theme, -0.25)); page.style.setProperty('--tl-l', MI.util.shade(opts.theme, 0.85)); page.style.setProperty('--tl-d', MI.util.shade(opts.theme, -0.68)); }
+    if (opts.theme) { document.body.style.setProperty('--theme', opts.theme); document.body.style.setProperty('--theme-deep', MI.util.shade(opts.theme, -0.25)); }
     var bar = h('div', { class: 'progress-fill' });
     var counter = h('span', { class: 'play-count' });
     var streakEl = h('span', { class: 'streak', 'aria-live': 'polite' });
@@ -83,6 +84,9 @@
       ]);
       var card = h('section', { class: 'q-card' }, [meta, h('p', { class: 'q-prompt', text: q.prompt })]);
       if (q.data.show) card.appendChild(h('div', { class: 'bignum' + (String(q.data.show).length > 14 ? ' long' : ''), text: q.data.show }));
+      if (q.data.diagram && MI.diagrams) card.appendChild(MI.diagrams.render(q.data.diagram));
+      if (q.data.figure && MI.geo) card.appendChild(MI.geo.figure(q.data.figure));
+      if (q.data.table && MI.diagrams) card.appendChild(MI.diagrams.table(q.data.table));
       var wbox = h('div', { class: 'q-widget' });
       card.appendChild(wbox);
       main.appendChild(card);
@@ -133,7 +137,8 @@
       MI.sound.play('wrong');
       updateTop();
       if (attempts === 1) {
-        showSheet('oops', '🤔 ' + MI.ui.oops(), hintOverride || q.hint, [
+        var hint = hintOverride || (ctrl.hintFor && ctrl.hintFor(v)) || q.hint;
+        showSheet('oops', '🤔 ' + MI.ui.oops(), hint, [
           { text: '看讲解', onClick: learn },
           { text: '再试一次', primary: true, onClick: hideSheet }
         ]);
@@ -257,6 +262,8 @@
     return function cleanup() {
       if (ctrl) ctrl.destroy();
       MI.keypad.close();
+      document.body.style.removeProperty('--theme');
+      document.body.style.removeProperty('--theme-deep');
     };
   }
 

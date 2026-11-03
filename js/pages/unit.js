@@ -181,6 +181,13 @@
         MI.router.go('#/play/' + unit.id + '/practice/' + chosen);
       } })
     ]));
+    (unit.extras || []).forEach(function (x) {
+      body.appendChild(h('a', { href: x.href, class: 'card extra-card' }, [
+        h('span', { class: 'extra-icon', 'aria-hidden': 'true', text: x.icon }),
+        h('span', { class: 'extra-text' }, [h('b', { text: x.title }), h('span', { class: 'muted', text: x.desc })]),
+        h('span', { class: 'muted', text: '›' })
+      ]));
+    });
     body.appendChild(skillList(unit));
   }
 

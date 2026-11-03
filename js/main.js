@@ -7,6 +7,7 @@
   R.add(/^\/$/, P.map);
   R.add(/^\/unit\/(u\d)(?:\/(cards|practice|quiz))?$/, function (app, m) { return P.unit(app, m[0], m[1]); });
   R.add(/^\/play\/(u\d)\/(practice|quiz)(?:\/(\d))?$/, function (app, m) { return P.play(app, m[0], m[1], m[2]); });
+  R.add(/^\/blitz\/(u\d)$/, function (app, m) { return P.blitz(app, m[0]); });
   R.add(/^\/settings$/, P.settings);
   R.add(/^\/daily$/, P.soon('每日一练', '📅', '#/daily', '每天 10 道题，优先练错题和还不熟的知识点。这个功能正在制作中。'));
   R.add(/^\/wrong$/, P.soon('错题本', '📒', '#/wrong', '做错的题已经在悄悄记下来了，错题本页面正在制作中。'));
