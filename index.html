@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="zh-CN" data-font="normal">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#FFF6E9" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#17162B" media="(prefers-color-scheme: dark)">
+  <!-- 防止 iOS 把长数字识别成电话号码 -->
+  <meta name="format-detection" content="telephone=no">
+  <meta name="description" content="人教版（2026 秋）四年级上册数学复习闯关">
+  <title>数学岛 · 四年级上册复习</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8F%9D%EF%B8%8F%3C/text%3E%3C/svg%3E">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="数学岛">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <noscript><p style="padding:24px">需要开启 JavaScript 才能使用数学岛。</p></noscript>
+  <div id="app"></div>
+
+  <!-- 按顺序加载，全部挂在 window.MathIsland 下（不用 ES module，本地直接打开也能运行） -->
+  <!-- 核心 -->
+  <script src="js/core/base.js"></script>
+  <script src="js/core/numbers.js"></script>
+  <script src="js/core/check.js"></script>
+  <script src="js/core/registry.js"></script>
+  <script src="js/core/arith.js"></script>
+  <script src="js/core/storage.js"></script>
+  <script src="js/core/sound.js"></script>
+  <script src="js/core/speech.js"></script>
+  <script src="js/core/ui.js"></script>
+  <script src="js/core/keypad.js"></script>
+  <script src="js/core/types.js"></script>
+  <script src="js/core/engine.js"></script>
+  <script src="js/core/router.js"></script>
+  <script src="js/core/badges.js"></script>
+  <!-- 互动组件 -->
+  <script src="js/widgets/drag.js"></script>
+  <script src="js/widgets/place-value.js"></script>
+  <script src="js/widgets/big-number.js"></script>
+  <script src="js/widgets/vertical-mul.js"></script>
+  <script src="js/widgets/diagrams.js"></script>
+  <script src="js/widgets/geometry.js"></script>
+  <script src="js/widgets/charts.js"></script>
+  <script src="js/widgets/treasure.js"></script>
+  <script src="js/widgets/chick-rabbit.js"></script>
+  <!-- 单元内容（知识卡 + 题目生成器） -->
+  <script src="js/units/u1-big-numbers.js"></script>
+  <script src="js/units/u2-angles.js"></script>
+  <script src="js/units/u3-multiply.js"></script>
+  <script src="js/units/u4-models.js"></script>
+  <script src="js/units/u5-quadrilaterals.js"></script>
+  <script src="js/units/u6-bar-charts.js"></script>
+  <script src="js/units/u7-treasure.js"></script>
+  <script src="js/units/u8-chicken-rabbit.js"></script>
+  <script src="js/units/u9-final.js"></script>
+  <!-- 页面 -->
+  <script src="js/pages/map.js"></script>
+  <script src="js/pages/unit.js"></script>
+  <script src="js/pages/settings.js"></script>
+  <script src="js/pages/blitz.js"></script>
+  <script src="js/pages/review.js"></script>
+  <script src="js/pages/parent.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
