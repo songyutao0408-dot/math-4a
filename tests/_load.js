@@ -7,8 +7,10 @@ const files = [
   'js/core/registry.js',
   'js/core/arith.js',
   'js/units/u1-big-numbers.js',
+  'js/units/u2-angles.js',
   'js/units/u3-multiply.js',
-  'js/units/u4-models.js'
+  'js/units/u4-models.js',
+  'js/units/u5-quadrilaterals.js'
 ];
 files.forEach((f) => require(path.join(__dirname, '..', f)));
 module.exports = globalThis.MathIsland;

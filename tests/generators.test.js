@@ -59,7 +59,9 @@ function validate(q) {
     assert.ok(q.answer.length <= q.data.levels * 4, '数位顺序表放不下：' + where);
   }
   // 答案自洽：把正确答案交给判定函数，必须判对
-  assert.ok(MI.check(q, q.answer), '正确答案被判错：' + where);
+  // 有几个正确答案的“点一点”题，每个都要判对
+  const samples = q.type === 'pick' && Array.isArray(q.answer) ? q.answer : [q.answer];
+  samples.forEach((a) => assert.ok(MI.check(q, a), '正确答案被判错：' + where));
 }
 
 Object.keys(MI.units).forEach((uid) => {
@@ -89,7 +91,8 @@ test('组卷：练一练 10 题、测验 15 题，知识点尽量分散', () => 
         const r = MI.practiceRound(uid, d, rng);
         assert.equal(r.length, 10);
         const skills = new Set(r.map((x) => MI.units[uid].generators[x.gen].skill));
-        assert.ok(skills.size >= 5, '练一练知识点太集中');
+        const avail = new Set(MI.generatorsFor(uid, d).map((g) => g.skill)).size;
+        assert.ok(skills.size >= Math.min(5, avail), uid + ' 难度' + d + ' 练一练知识点太集中');
       });
       const quiz = MI.quizRound([uid], rng);
       assert.equal(quiz.length, 15);

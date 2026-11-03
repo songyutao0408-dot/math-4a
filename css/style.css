@@ -536,6 +536,80 @@ body.has-keypad .play-main { padding-bottom: calc(var(--kp-h) + 20px); }
 .blitz-card .blank { font-size: 1.8rem; min-width: 110px; }
 .blitz-card.blitz-wrong { border-color: var(--oops); }
 
+/* 几何图形（量角器、钟面、三角尺、方格纸） */
+.figure-wrap { margin: 6px 0 10px; padding: 6px; border-radius: 16px; background: var(--surface-2); border: 2px solid var(--edge); display: flex; justify-content: center; }
+.figure { display: block; width: 100%; height: auto; max-height: 46vh; }
+.figure.fig-small { max-width: 200px; }
+.g-text { fill: var(--ink); font-family: var(--font); font-weight: 700; font-size: 14px; }
+.g-label { fill: var(--ink); font-size: 15px; }
+.g-small { fill: var(--ink-2); font-size: 12px; }
+.g-name { fill: var(--ink); font-size: 16px; font-style: italic; font-weight: 800; }
+.g-ask { fill: var(--theme); font-size: 18px; font-weight: 900; }
+.g-line { stroke: var(--ink); stroke-width: 2; }
+.g-ray { stroke: var(--ink); stroke-width: 3; stroke-linecap: round; }
+.g-ray.c1 { stroke: var(--focus); }
+.g-ray.thick, .g-arc.thick { stroke-width: 4.5; }
+.g-ray.free { stroke: var(--theme); }
+.g-ray.answer { stroke: var(--ok); stroke-dasharray: 8 5; }
+.g-arc { fill: none; stroke: var(--theme); stroke-width: 2.5; }
+.g-arc.b { stroke: var(--focus); }
+.g-right { fill: none; stroke: var(--ink); stroke-width: 2; }
+.g-grid { stroke: var(--edge); stroke-width: 1; }
+.g-point { fill: var(--theme); stroke: var(--surface); stroke-width: 2; }
+.g-poly { fill: var(--theme-light); stroke: var(--ink); stroke-width: 3; stroke-linejoin: round; }
+.pr-body { fill: rgba(255, 197, 61, .16); stroke: var(--ink-2); stroke-width: 1.5; }
+.pr-inner { fill: none; stroke: var(--edge-strong); stroke-width: 1; }
+.pr-tick { stroke: var(--ink-2); stroke-width: .8; }
+.pr-tick.big { stroke: var(--ink); stroke-width: 1.4; }
+.pr-out { fill: var(--ink); font-size: 10px; font-weight: 800; }
+.pr-in { fill: #C2410C; font-size: 9px; font-weight: 800; }
+@media (prefers-color-scheme: dark) { .pr-in { fill: #FDBA74; } }
+.pr-base { stroke: var(--ink-2); stroke-width: 1.5; }
+.pr-center { fill: var(--ink); }
+.knob { fill: var(--theme); fill-opacity: .85; stroke: var(--surface); stroke-width: 3; cursor: grab; }
+.draw-angle { touch-action: none; }
+.nudge { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.nudge .muted { font-size: .85rem; text-align: center; }
+.ck-face { fill: var(--surface); stroke: var(--ink); stroke-width: 3; }
+.ck-tick { stroke: var(--ink-2); stroke-width: 1; }
+.ck-tick.big { stroke: var(--ink); stroke-width: 2.5; }
+.ck-num { fill: var(--ink); font-size: 14px; font-weight: 800; }
+.ck-hour { stroke: var(--ink); stroke-width: 6; stroke-linecap: round; }
+.ck-min { stroke: var(--theme); stroke-width: 4; stroke-linecap: round; }
+.tri { stroke: var(--ink); stroke-width: 2; stroke-linejoin: round; }
+.tri-a { fill: rgba(58, 142, 230, .28); }
+.tri-b { fill: rgba(255, 197, 61, .35); }
+
+/* 拖进筐里分类 */
+.sort-pool { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; min-height: 92px; padding: 8px; border-radius: 16px; border: 2px dashed var(--edge-strong); }
+.sort-pool.empty::after { content: "都放好啦，检查一下点“确定”"; color: var(--ink-2); font-size: .9rem; align-self: center; }
+.sort-item { width: 78px; height: 78px; padding: 2px; border-radius: 14px; border: 2px solid var(--edge-strong); background: var(--surface); box-shadow: 0 3px 0 var(--edge-strong); }
+.sort-item .thumb { width: 100%; height: 100%; display: block; pointer-events: none; }
+.sort-item.sel { outline: 4px solid var(--sun); transform: translateY(-2px); }
+.sort-item.wrong { border-color: var(--oops); background: var(--oops-bg); }
+.sort-item.revealed { border-color: var(--ok); }
+.sort-item.dragging { opacity: .4; }
+.drag-ghost.sort-item { width: 78px; height: 78px; }
+.sort-bins { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; }
+.sort-bins.many { grid-template-columns: repeat(2, 1fr); }
+.sort-bin {
+  display: flex; flex-direction: column; align-items: stretch; gap: 4px; min-height: 104px; padding: 6px;
+  border-radius: 16px; border: 2px solid var(--theme); background: var(--theme-light); text-align: center;
+}
+.sort-bin.drop-over { background: var(--sun-bg); border-color: var(--focus); }
+.sort-name { font-weight: 900; font-size: .95rem; }
+.sort-drop { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; }
+.sort-drop .sort-item { width: 56px; height: 56px; box-shadow: none; }
+
+/* 在图上点一条线 */
+.pick-seg { cursor: pointer; outline: none; }
+.pick-hit { stroke: transparent; stroke-width: 26; stroke-linecap: round; }
+.pick-line { stroke: var(--ink); stroke-width: 4; stroke-linecap: round; }
+.pick-seg:focus-visible .pick-line { stroke: var(--focus); }
+.pick-seg.sel .pick-line { stroke: var(--theme); stroke-width: 7; }
+.pick-seg.tried .pick-line { stroke: var(--edge-strong); stroke-dasharray: 6 6; }
+.pick-seg.correct .pick-line { stroke: var(--ok); stroke-width: 7; }
+
 /* 讲解 */
 .explain {
   margin-top: 14px; padding: 14px 16px; border-radius: 20px;

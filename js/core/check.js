@@ -88,6 +88,8 @@
       for (var i = 0; i < v.length; i++) if (v[i] !== q.answer[i]) return false;
       return true;
     },
+    /** 补统计图：每根直条的数值都对 */
+    barFill: function (q, v) { return checkers.sort(q, v); },
     /** 在图上点：点中任意一个正确答案都算对 */
     pick: function (q, v) { return (Array.isArray(q.answer) ? q.answer : [q.answer]).indexOf(v) >= 0; },
     /** 竖式：每一行都要和答案一致（空格用 _ 表示） */
