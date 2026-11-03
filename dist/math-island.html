@@ -265,16 +265,16 @@ p { margin: .4rem 0; }
 
 /* 知识卡 */
 .cards-count { text-align: center; color: var(--ink-2); font-weight: 700; margin: 12px 0 6px; }
-.cards-viewport { overflow: hidden; margin: 0 -16px; padding: 4px 16px 10px; touch-action: pan-y; }
+.cards-viewport { overflow: hidden; margin: 0 -16px; padding: 4px 8px 10px; touch-action: pan-y; }
 .cards-track { display: flex; transition: transform .28s cubic-bezier(.2, .8, .2, 1); }
 .cards-track.dragging { transition: none; }
+.kslide { flex: 0 0 100%; min-width: 0; padding: 0 8px; display: flex; }
 .kcard {
-  flex: 0 0 100%; margin-right: 0; padding: 18px 16px 16px;
+  flex: 1 1 auto; min-width: 0; padding: 18px 16px 16px;
   background: var(--surface); border: 2px solid var(--edge); border-radius: 24px;
   box-shadow: 0 5px 0 var(--edge-strong);
   display: flex; flex-direction: column;
 }
-.kcard + .kcard { margin-left: 16px; }
 .kcard.known { border-color: var(--ok); box-shadow: 0 5px 0 var(--ok); }
 .kcard-head { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
 .kcard-emoji { font-size: 1.8rem; }
@@ -7903,8 +7903,11 @@ body.has-keypad .play-main { padding-bottom: calc(var(--kp-h) + 20px); }
         c.pitfall ? h('div', { class: 'kcard-pitfall' }, [h('b', { text: '⚠️ 易错提醒：' }), c.pitfall]) : null,
         knowBtn
       ]);
-      card._know = knowBtn;
-      track.appendChild(card);
+      // 每张卡放在一个正好一屏宽的“格子”里，卡片之间的间距在格子内部，翻页时正好移动一整屏
+      var slide = h('div', { class: 'kslide' }, card);
+      slide._know = knowBtn;
+      slide._card = card;
+      track.appendChild(slide);
       dots.appendChild(h('span', { class: 'dot' }));
     });
     var prev = h('button', { type: 'button', class: 'icon-btn nav-btn', 'aria-label': '上一张', text: '‹', onclick: function () { go(i - 1); } });
@@ -7922,7 +7925,7 @@ body.has-keypad .play-main { padding-bottom: calc(var(--kp-h) + 20px); }
         var on = !!known[cards[k].id];
         el._know.textContent = on ? '✓ 我懂了' : '我懂了';
         el._know.classList.toggle('on', on);
-        el.classList.toggle('known', on);
+        el._card.classList.toggle('known', on);
         el.setAttribute('aria-hidden', k === i ? 'false' : 'true');
       });
       Array.prototype.forEach.call(dots.children, function (d, k) {

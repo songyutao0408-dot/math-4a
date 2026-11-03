@@ -1,7 +1,7 @@
 /* 数学岛 · Service Worker：缓存全部资源，离线可用。
  * 作用域是 sw.js 所在目录（GitHub Pages 的 /仓库名/），所有路径都是相对路径。
  * 下面的 VERSION 和 ASSETS 由 `node scripts/bundle.js` 自动更新，不要手改。 */
-var VERSION = 'mi4a-10b5f22fcf';
+var VERSION = 'mi4a-4a31c05e7c';
 var ASSETS = [
   './',
   'index.html',

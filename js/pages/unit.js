@@ -88,8 +88,11 @@
         c.pitfall ? h('div', { class: 'kcard-pitfall' }, [h('b', { text: '⚠️ 易错提醒：' }), c.pitfall]) : null,
         knowBtn
       ]);
-      card._know = knowBtn;
-      track.appendChild(card);
+      // 每张卡放在一个正好一屏宽的“格子”里，卡片之间的间距在格子内部，翻页时正好移动一整屏
+      var slide = h('div', { class: 'kslide' }, card);
+      slide._know = knowBtn;
+      slide._card = card;
+      track.appendChild(slide);
       dots.appendChild(h('span', { class: 'dot' }));
     });
     var prev = h('button', { type: 'button', class: 'icon-btn nav-btn', 'aria-label': '上一张', text: '‹', onclick: function () { go(i - 1); } });
@@ -107,7 +110,7 @@
         var on = !!known[cards[k].id];
         el._know.textContent = on ? '✓ 我懂了' : '我懂了';
         el._know.classList.toggle('on', on);
-        el.classList.toggle('known', on);
+        el._card.classList.toggle('known', on);
         el.setAttribute('aria-hidden', k === i ? 'false' : 'true');
       });
       Array.prototype.forEach.call(dots.children, function (d, k) {
