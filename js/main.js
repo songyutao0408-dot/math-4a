@@ -44,7 +44,7 @@
   R.start();
 
   // PWA：在 http(s) 下注册 Service Worker（本地直接打开文件时跳过）。作用域是 sw.js 所在目录，适配 /仓库名/ 子路径
-  if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
+  if (!window.MathIslandSingleFile && 'serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
     window.addEventListener('load', function () {
       try { navigator.serviceWorker.register('./sw.js', { scope: './' }).catch(function () { /* 离线功能可有可无 */ }); } catch (e) { /* 忽略 */ }
     });

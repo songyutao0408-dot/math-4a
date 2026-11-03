@@ -24,8 +24,12 @@ function version(list) {
   return 'mi4a-' + h.digest('hex').slice(0, 10);
 }
 
-function bundle(a) {
+function bundle(a, opts) {
+  opts = opts || {};
   let out = a.html;
+  // 单文件版不注册 Service Worker；嵌在别的页面里时用内存路由
+  const flags = 'window.MathIslandSingleFile = true;' + (opts.memoryRouter ? ' window.MathIslandMemoryRouter = true;' : '');
+  out = out.replace('<script src="' + a.scripts[0] + '"></script>', () => '<script>' + flags + '</script>\n  <script src="' + a.scripts[0] + '"></script>');
   // 单文件版不需要 manifest、图标和 Service Worker（本地文件打开时也不会注册）
   out = out.replace(/\s*<link rel="manifest"[^>]*>/, '').replace(/\s*<link rel="apple-touch-icon"[^>]*>/, '');
   a.styles.forEach((s) => {
@@ -39,8 +43,26 @@ function bundle(a) {
   return out;
 }
 
+/** 嵌入版：只要页面内容（外层的 <!doctype>/<html>/<head>/<body> 由宿主提供） */
+function embedded(a) {
+  const full = bundle(a, { memoryRouter: true });
+  const head = full.slice(full.indexOf('<head>') + 6, full.indexOf('</head>'));
+  const body = full.slice(full.indexOf('<body>') + 6, full.lastIndexOf('</body>'));
+  return head.replace(/<title>[^<]*<\/title>/, '<title>数学岛</title>')
+    .replace(/\s*<meta charset="utf-8">/, '')
+    // 宿主已经给 :root 加了刘海的上下留白，这里不要重复
+    + '\n<style>body { padding-top: 0; }</style>\n' + body;
+}
+
 function main() {
   const a = assets();
+  const ai = process.argv.indexOf('--embedded');
+  if (ai >= 0) {
+    const out = process.argv[ai + 1];
+    fs.writeFileSync(out, embedded(a));
+    console.log('✔ 嵌入版 ' + out);
+    return;
+  }
   const v = version(a.list);
   // 更新 sw.js
   let sw = read('sw.js');
@@ -56,4 +78,4 @@ function main() {
 }
 
 if (require.main === module) main();
-module.exports = { assets, version, bundle };
+module.exports = { assets, version, bundle, embedded };
