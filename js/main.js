@@ -9,10 +9,12 @@
   R.add(/^\/play\/(u\d)\/(practice|quiz)(?:\/(\d))?$/, function (app, m) { return P.play(app, m[0], m[1], m[2]); });
   R.add(/^\/blitz\/(u\d)$/, function (app, m) { return P.blitz(app, m[0]); });
   R.add(/^\/settings$/, P.settings);
-  R.add(/^\/daily$/, P.soon('每日一练', '📅', '#/daily', '每天 10 道题，优先练错题和还不熟的知识点。这个功能正在制作中。'));
-  R.add(/^\/wrong$/, P.soon('错题本', '📒', '#/wrong', '做错的题已经在悄悄记下来了，错题本页面正在制作中。'));
-  R.add(/^\/badges$/, P.soon('奖励', '🏅', '#/badges', '“大数小达人”“连对 10 题”……徽章墙正在制作中。'));
-  R.add(/^\/parent$/, P.soon('家长页', '👨‍👩‍👧', '#/settings', '学习情况统计、导出数据等功能正在制作中。'));
+  R.add(/^\/daily(?:\/(go))?$/, function (app, m) { return P.daily(app, m[0]); });
+  R.add(/^\/wrong(?:\/(u\d))?$/, function (app, m) { return P.wrong(app, m[0]); });
+  R.add(/^\/review(?:\/(u\d))?$/, function (app, m) { return P.review(app, m[0]); });
+  R.add(/^\/review-one\/(.+)$/, function (app, m) { return P.review(app, null, m[0]); });
+  R.add(/^\/badges$/, P.badges);
+  R.add(/^\/parent$/, P.parent);
 
   MI.applySettings();
 
@@ -40,4 +42,11 @@
   }, 15000);
 
   R.start();
+
+  // PWA：在 http(s) 下注册 Service Worker（本地直接打开文件时跳过）。作用域是 sw.js 所在目录，适配 /仓库名/ 子路径
+  if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
+    window.addEventListener('load', function () {
+      try { navigator.serviceWorker.register('./sw.js', { scope: './' }).catch(function () { /* 离线功能可有可无 */ }); } catch (e) { /* 忽略 */ }
+    });
+  }
 })(window);

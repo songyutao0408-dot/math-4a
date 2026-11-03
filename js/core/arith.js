@@ -122,5 +122,21 @@
     return out;
   }
 
+  /**
+   * 鸡兔同笼求解（也适用于龟鹤、租船、钱币）：
+   * 一共 heads 个，每个“小的”有 a 只脚，每个“大的”有 b 只脚，一共 legs 只脚。
+   * 返回 { small, big }（只数都是自然数）；无解返回 null。
+   * 假设法：假设全是小的，大的只数 = (legs − heads × a) ÷ (b − a)。
+   */
+  function chickRabbit(heads, legs, a, b) {
+    a = a || 2; b = b || 4;
+    var diff = legs - heads * a, per = b - a;
+    if (per <= 0 || diff < 0 || diff % per !== 0) return null;
+    var big = diff / per, small = heads - big;
+    if (small < 0) return null;
+    return { small: small, big: big };
+  }
+  MI.chickRabbit = chickRabbit;
+
   MI.mul = { stripZeros: stripZeros, partial: partial, layout: mulLayout, rowString: rowString, cellHint: cellHint, explain: mulExplain };
 })(typeof window !== 'undefined' ? window : globalThis);

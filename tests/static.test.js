@@ -50,3 +50,23 @@ test('本地存储只通过 MI.store（统一 mi4a: 前缀、try/catch 保护）
     (code.match(/sessionStorage\.\w+Item\('([^']+)/g) || []).forEach((m) => assert.ok(m.includes("'mi4a:"), f + ' sessionStorage 键名缺前缀'));
   });
 });
+
+test('打包：单文件版和 Service Worker 清单都是最新的（改了代码请运行 node scripts/bundle.js）', () => {
+  const B = require('../scripts/bundle.js');
+  const a = B.assets();
+  a.list.filter((f) => f !== './').forEach((f) => assert.ok(fs.existsSync(path.join(ROOT, f)), '缺少文件 ' + f));
+  const sw = fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8');
+  assert.ok(sw.includes("var VERSION = '" + B.version(a.list) + "'"), 'sw.js 版本号过期');
+  a.list.forEach((f) => assert.ok(sw.includes("'" + f + "'"), 'sw.js 缺少缓存文件 ' + f));
+  const dist = fs.readFileSync(path.join(ROOT, 'dist', 'math-island.html'), 'utf8');
+  assert.equal(dist, B.bundle(a), 'dist/math-island.html 过期');
+  assert.ok(!/<script src=|<link rel="stylesheet"/.test(dist), '单文件版不能再引用外部文件');
+  assert.ok(!/https?:\/\/(?!www\.w3\.org)/.test(dist.replace(/\/\*[\s\S]*?\*\//g, '')), '单文件版引用了外部地址');
+});
+
+test('manifest：相对路径，适配 /仓库名/ 子路径', () => {
+  const m = JSON.parse(fs.readFileSync(path.join(ROOT, 'manifest.json'), 'utf8'));
+  assert.equal(m.start_url, './');
+  assert.equal(m.scope, './');
+  m.icons.forEach((i) => { assert.ok(!i.src.startsWith('/')); assert.ok(fs.existsSync(path.join(ROOT, i.src))); });
+});

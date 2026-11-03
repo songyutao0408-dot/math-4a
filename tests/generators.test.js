@@ -89,12 +89,13 @@ test('组卷：练一练 10 题、测验 15 题，知识点尽量分散', () => 
       const rng = MI.makeRng(k + 1);
       [1, 2, 3].forEach((d) => {
         const r = MI.practiceRound(uid, d, rng);
+        const pool = MI.unitPool(uid);
         assert.equal(r.length, 10);
-        const skills = new Set(r.map((x) => MI.units[uid].generators[x.gen].skill));
-        const avail = new Set(MI.generatorsFor(uid, d).map((g) => g.skill)).size;
+        const skills = new Set(r.map((x) => x.unit + '.' + MI.units[x.unit].generators[x.gen].skill));
+        const avail = new Set([].concat(...pool.map((u) => MI.generatorsFor(u, d).map((g) => u + '.' + g.skill)))).size;
         assert.ok(skills.size >= Math.min(5, avail), uid + ' 难度' + d + ' 练一练知识点太集中');
       });
-      const quiz = MI.quizRound([uid], rng);
+      const quiz = MI.quizRound(MI.unitPool(uid), rng);
       assert.equal(quiz.length, 15);
       assert.deepEqual(quiz.map((x) => x.d), [1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3]);
     }

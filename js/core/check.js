@@ -90,6 +90,11 @@
     },
     /** 补统计图：每根直条的数值都对 */
     barFill: function (q, v) { return checkers.sort(q, v); },
+    /** 鸡兔同笼互动：只数对 */
+    chickTable: function (q, v) { return Number(v) === Number(q.answer); },
+    drawLegs: function (q, v) { return Number(v) === Number(q.answer); },
+    /** 寻宝：走到的格子对 */
+    walk: function (q, v) { return v === q.answer; },
     /** 在图上点：点中任意一个正确答案都算对 */
     pick: function (q, v) { return (Array.isArray(q.answer) ? q.answer : [q.answer]).indexOf(v) >= 0; },
     /** 竖式：每一行都要和答案一致（空格用 _ 表示） */

@@ -112,6 +112,7 @@
       var isBest = right > (rec[uid] || 0);
       if (isBest) { rec[uid] = right; MI.store.set('blitz', rec); best = right; }
       MI.sound.play('finish');
+      MI.showNewBadges(900);
       main.innerHTML = '';
       main.appendChild(h('section', { class: 'result' }, [
         h('div', { class: 'result-emoji', text: right >= 15 ? '🚀' : right >= 8 ? '🎉' : '💪' }),

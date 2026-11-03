@@ -80,6 +80,7 @@
         ref.extra ? h('span', { class: 'chip chip-sun', text: '巩固一下' }) : null,
         h('span', { class: 'chip', text: MI.skillName(q.unit, q.skill) }),
         h('span', { class: 'chip chip-soft', text: MI.DIFFICULTY[q.difficulty] }),
+        MI.speech && MI.speech.enabled() ? h('button', { type: 'button', class: 'hint-btn speak-btn', 'aria-label': '读题', text: '🔊', onclick: function () { MI.speech.read(q); } }) : null,
         h('button', { type: 'button', class: 'hint-btn', text: '💡 提示', onclick: showHint })
       ]);
       var card = h('section', { class: 'q-card' }, [meta, h('p', { class: 'q-prompt', text: q.prompt })]);
@@ -111,6 +112,7 @@
       results.push({ id: q.id, unit: q.unit, skill: q.skill, firstTry: firstTry, extra: !!items[idx].extra });
       MI.progress.recordAnswer(q, firstTry);
       if (!firstTry) MI.progress.addWrong(q);
+      if (opts.onAnswer) opts.onAnswer(q, firstTry);
     }
 
     function right() {
@@ -123,7 +125,8 @@
       if (card) { card.classList.remove('pop'); void card.offsetWidth; card.classList.add('pop'); }
       var msg = attempts === 1 ? MI.ui.praise(streak) : '改对啦！知错就改，真棒！';
       var extra = null;
-      if (opts.mode === 'review' && attempts === 1) {
+      // 错题本里的题（不管在哪种模式下遇到），一次答对就记一次；连续答对 2 次自动移出
+      if (attempts === 1 && MI.progress.inWrongBook(q.id) && !items[idx].fresh) {
         extra = MI.progress.wrongRight(q) ? '这道题已经从错题本“毕业”啦 🎓' : '再答对一次，它就能从错题本毕业啦！';
       }
       showSheet('ok', '✨ ' + msg, extra, [{ text: idx + 1 < items.length ? '下一题 →' : '看看成绩 →', primary: true, onClick: next }]);
@@ -215,6 +218,7 @@
       var stars = 0, best = false;
       if (opts.mode === 'quiz') { stars = MI.starsFor(correct, total); best = MI.progress.recordQuiz(opts.unit, correct, total, stars); }
       else if (opts.mode === 'practice') MI.progress.recordPractice(opts.unit);
+      else if (opts.mode === 'daily') { MI.store.set('dailyDone', { date: MI.util.todayKey(), correct: correct, total: total }); MI.store.set('dailyCount', (MI.store.get('dailyCount', 0) || 0) + 1); }
       var weak = {};
       results.forEach(function (r) { if (!r.firstTry) weak[r.unit + '.' + r.skill] = MI.skillName(r.unit, r.skill); });
       var weakNames = Object.keys(weak).map(function (k) { return weak[k]; });
@@ -232,6 +236,7 @@
         h('div', { class: 'result-emoji', text: emoji }),
         h('h2', { class: 'result-title', text: title }),
         opts.mode === 'quiz' ? h('div', { class: 'result-stars' }, starRow(stars)) : null,
+        opts.mode === 'review' ? h('p', { class: 'muted', text: '错题本里还有 ' + Object.keys(MI.progress.wrongBook()).length + ' 道题。' }) : null,
         h('p', { class: 'result-score' }, ['一次答对 ', h('b', { text: correct }), ' / ' + total + ' 题']),
         best && stars > 0 ? h('p', { class: 'result-best', text: '🎊 新纪录！这座岛的星星更新啦' }) : null,
         h('p', { class: 'result-tip', text: weakNames.length ? '这几个知识点再练练会更棒：' + weakNames.join('、') : '每个知识点都掌握得很好，继续保持！' }),
@@ -248,6 +253,7 @@
         });
       }
       if (rate >= 0.8) setTimeout(function () { MI.ui.celebrate(box.querySelector('.result-emoji'), 12); }, 120);
+      MI.showNewBadges(1100);
     }
 
     function starRow(n) {
@@ -260,12 +266,29 @@
     MI.engine.current = function () { return q; };
     show();
     return function cleanup() {
+      if (MI.speech) MI.speech.stop();
       if (ctrl) ctrl.destroy();
       MI.keypad.close();
       document.body.style.removeProperty('--theme');
       document.body.style.removeProperty('--theme-deep');
     };
   }
+
+  /** 有新徽章就弹窗告诉孩子 */
+  MI.showNewBadges = function (delay) {
+    if (!MI.badges) return;
+    var fresh = MI.badges.check();
+    if (!fresh.length) return;
+    setTimeout(function () {
+      MI.sound.play('star');
+      MI.ui.modal({
+        emoji: fresh.map(function (b) { return b.emoji; }).join(''),
+        title: '获得新徽章！',
+        body: fresh.map(function (b) { return '“' + b.name + '”：' + b.desc; }).join('\n'),
+        buttons: [{ text: '去看看', onClick: function () { MI.router.go('#/badges'); } }, { text: '太好了', primary: true }]
+      });
+    }, delay || 0);
+  };
 
   MI.engine = { run: run, formatAnswer: formatAnswer, MODE_NAME: MODE_NAME };
 })(typeof window !== 'undefined' ? window : globalThis);

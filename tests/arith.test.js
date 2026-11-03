@@ -77,3 +77,17 @@ test('提示像老师说话', () => {
   assert.match(M.cellHint(L, 1, 0), /十位对齐/);
   assert.match(M.cellHint(M.layout(450, 30), 0, 0), /添上 2 个 0/);
 });
+
+test('鸡兔同笼求解', () => {
+  assert.deepEqual(MI.chickRabbit(8, 26), { small: 3, big: 5 });       // 课本例题：鸡 3 兔 5
+  assert.deepEqual(MI.chickRabbit(35, 94), { small: 23, big: 12 });    // 《孙子算经》：雉 23 兔 12
+  assert.deepEqual(MI.chickRabbit(10, 52, 4, 6), { small: 4, big: 6 }); // 租船：小船 4 人、大船 6 人
+  assert.equal(MI.chickRabbit(8, 27), null);   // 脚数是奇数，无解
+  assert.equal(MI.chickRabbit(8, 40), null);   // 脚太多，兔比头还多
+  assert.equal(MI.chickRabbit(8, 10), null);   // 脚太少
+  const rng = MI.makeRng(7);
+  for (let i = 0; i < 2000; i++) {
+    const c = rng.int(0, 40), r = rng.int(0, 40);
+    assert.deepEqual(MI.chickRabbit(c + r, 2 * c + 4 * r), { small: c, big: r });
+  }
+});

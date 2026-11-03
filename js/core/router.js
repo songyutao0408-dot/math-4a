@@ -17,7 +17,7 @@
     for (var i = 0; i < routes.length; i++) {
       var m = path.match(routes[i].re);
       if (m) {
-        var res = routes[i].fn(app, m.slice(1).map(decodeURIComponent));
+        var res = routes[i].fn(app, m.slice(1).map(function (x) { return x == null ? undefined : decodeURIComponent(x); }));
         cleanup = typeof res === 'function' ? res : null;
         try { root.scrollTo(0, 0); } catch (e) { /* 忽略 */ }
         var heading = app.querySelector('h1, h2');

@@ -90,5 +90,5 @@
   MI.newSeed = newSeed;
   MI.hashStr = hashStr;
   MI.util = util;
-  MI.version = '0.1.0';
+  MI.version = '1.0.0';
 })(typeof window !== 'undefined' ? window : globalThis);

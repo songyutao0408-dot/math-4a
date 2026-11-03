@@ -138,6 +138,7 @@
     var removed = item.streak >= 2;
     if (removed) delete w[q.id]; else w[q.id] = item;
     store.set('wrong', w);
+    if (removed) { var s = stats(); s.graduated = (s.graduated || 0) + 1; store.set('stats', s); }
     return removed;
   }
 
@@ -161,7 +162,7 @@
     settings: settings, setSetting: setSetting,
     unit: unitProgress, setCardKnown: setCardKnown, recordQuiz: recordQuiz, recordPractice: recordPractice,
     stats: stats, recordAnswer: recordAnswer, recordStreak: recordStreak, skillStat: skillStat,
-    wrongBook: wrongBook, addWrong: addWrong, wrongRight: wrongRight,
+    wrongBook: wrongBook, addWrong: addWrong, wrongRight: wrongRight, inWrongBook: function (id) { return !!wrongBook()[id]; },
     completion: completion
   };
 })(typeof window !== 'undefined' ? window : globalThis);

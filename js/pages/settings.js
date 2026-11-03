@@ -47,6 +47,7 @@
 
     page.appendChild(h('section', { class: 'card' }, [
       toggleRow('音效', '答对、答错时的小声音', 'sound'),
+      MI.speech && MI.speech.supported ? toggleRow('读题', '出题时用浏览器自带的声音读一遍，也可以点题目上的 🔊', 'speech') : null,
       h('div', { class: 'set-row' }, [h('div', { class: 'set-text' }, [h('div', { class: 'set-label', text: '字号' }), h('div', { class: 'set-desc', text: '看不清可以调大' })]), fontSeg])
     ]));
     page.appendChild(h('section', { class: 'card' }, [

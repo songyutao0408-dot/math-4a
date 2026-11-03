@@ -228,7 +228,8 @@
   MI.pages.play = function (app, uid, mode, d) {
     var isl = MI.island(uid);
     if (!isl || !MI.units[uid]) { MI.router.go('#/'); return; }
-    var items = mode === 'quiz' ? MI.quizRound([uid]) : MI.practiceRound(uid, MI.util.clamp(Number(d) || 1, 1, 3));
+    var pool = MI.unitPool(uid);
+    var items = mode === 'quiz' ? MI.quizRound(pool) : MI.practiceRound(pool, MI.util.clamp(Number(d) || 1, 1, 3));
     return MI.engine.run(app, {
       mode: mode === 'quiz' ? 'quiz' : 'practice',
       unit: uid, items: items, theme: isl.color,

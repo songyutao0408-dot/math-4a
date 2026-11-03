@@ -86,7 +86,7 @@
    */
   MI.buildRound = function (unitIds, difficulties, rng) {
     rng = rng || MI.makeRng(MI.newSeed());
-    var skillUse = {}, genUse = {};
+    var skillUse = {}, genUse = {}, unitUse = {};
     var items = [];
     difficulties.forEach(function (d) {
       var cands = [];
@@ -94,6 +94,10 @@
         MI.generatorsFor(uid, d).forEach(function (g) { cands.push({ unit: uid, g: g }); });
       });
       if (!cands.length) return;
+      // 混合多个单元时，先让每个单元轮流出现
+      var minU = Infinity;
+      cands.forEach(function (c) { minU = Math.min(minU, unitUse[c.unit] || 0); });
+      cands = cands.filter(function (c) { return (unitUse[c.unit] || 0) === minU; });
       var minUse = Infinity;
       cands.forEach(function (c) {
         var k = c.unit + '.' + c.g.skill;
@@ -102,23 +106,30 @@
       var pool = cands.filter(function (c) { return (skillUse[c.unit + '.' + c.g.skill] || 0) === minUse; });
       // 同一知识点里，少用的生成器优先，再按权重随机
       var minGen = Infinity;
-      pool.forEach(function (c) { minGen = Math.min(minGen, genUse[c.g.id] || 0); });
-      pool = pool.filter(function (c) { return (genUse[c.g.id] || 0) === minGen; });
+      pool.forEach(function (c) { minGen = Math.min(minGen, genUse[c.unit + '.' + c.g.id] || 0); });
+      pool = pool.filter(function (c) { return (genUse[c.unit + '.' + c.g.id] || 0) === minGen; });
       var total = 0;
       pool.forEach(function (c) { total += c.g.weight || 1; });
       var x = rng.next() * total, chosen = pool[pool.length - 1];
       for (var i = 0; i < pool.length; i++) { x -= pool[i].g.weight || 1; if (x < 0) { chosen = pool[i]; break; } }
       skillUse[chosen.unit + '.' + chosen.g.skill] = (skillUse[chosen.unit + '.' + chosen.g.skill] || 0) + 1;
-      genUse[chosen.g.id] = (genUse[chosen.g.id] || 0) + 1;
+      genUse[chosen.unit + '.' + chosen.g.id] = (genUse[chosen.unit + '.' + chosen.g.id] || 0) + 1;
+      unitUse[chosen.unit] = (unitUse[chosen.unit] || 0) + 1;
       items.push({ unit: chosen.unit, gen: chosen.g.id, seed: Math.floor(rng.next() * 4294967296) >>> 0, d: d });
     });
     return rng.shuffle(items);
   };
 
-  /** 练一练：10 题同一难度 */
+  /** 出题用的单元：期末大挑战会混合多个单元（unit.mix） */
+  MI.unitPool = function (unitId) {
+    var u = MI.units[unitId];
+    return (u && u.mix ? u.mix : [unitId]).filter(function (id) { return MI.units[id]; });
+  };
+
+  /** 练一练：10 题同一难度（unitId 可以是单元 id，也可以是单元 id 数组） */
   MI.practiceRound = function (unitId, d, rng) {
     var ds = []; for (var i = 0; i < 10; i++) ds.push(d);
-    return MI.buildRound([unitId], ds, rng);
+    return MI.buildRound(Array.isArray(unitId) ? unitId : MI.unitPool(unitId), ds, rng);
   };
 
   /** 闯关测验：15 题混合难度（5 基础 + 6 提高 + 4 挑战），由易到难 */
